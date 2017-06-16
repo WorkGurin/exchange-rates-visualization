@@ -1,3 +1,26 @@
+html, body, .svg-block {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+}
+ul.thumbnails.image_picker_selector li {
+	width: 49%;
+	margin: 0;
+}
+ul.thumbnails.image_picker_selector li:first-child {
+	margin-right: 2%;
+}
+.thumbnail.selected {
+	background: #5bc0de !important;
+}
+.thumbnail p {
+	text-align: center;
+	margin-top: 10px;
+}
+.thumbnail.selected p {
+	color: #ffffff;
+}
 
 body {
     font-family: 'Roboto', sans-serif;
