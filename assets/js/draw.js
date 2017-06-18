@@ -53,7 +53,6 @@ request.onreadystatechange = function (e) {
 };
 
 $(function () {
-
     $('#colorpicker').colorpicker();
     $("#imagepicker").imagepicker({
         show_label: true,
@@ -80,12 +79,6 @@ $(function () {
     }
 });
 
-d3.select(".save").on("click", function () {
-    saveSvgAsPng(d3.select('svg').node(), 'chart.png');
-});
-
-var color = document.getElementById('color').value;
-
 function drawStackedAreaChart(histcatexplong) {
     Array.prototype.max = function () {
         return Math.max.apply(null, this);
@@ -95,16 +88,18 @@ function drawStackedAreaChart(histcatexplong) {
         return Math.min.apply(null, this);
     };
 
-    var arrayY = [];
-    for (var hist in histcatexplong[0].values) {
+    let arrayY = [];
+    for (let hist in histcatexplong[0].values) {
         arrayY.push(histcatexplong[0].values[hist][1]);
     }
 
-    var minYValue = arrayY.min();
-    var maxYValue = arrayY.max();
+    const minYValue = arrayY.min();
+    const maxYValue = arrayY.max();
 
     nv.addGraph(function () {
-        var chart = nv.models.stackedAreaChart()
+        let color = $('#colorpicker').colorpicker('getValue');
+        console.info("colorpicker", color)
+        let chart = nv.models.stackedAreaChart()
             .useInteractiveGuideline(true)
             .x(function (d) {
                 return d['x']
@@ -112,7 +107,6 @@ function drawStackedAreaChart(histcatexplong) {
             .y(function (d) {
                 return d['y']
             })
-            .duration(300)
             .showControls(false)
             .clipEdge(true)
             .color([color])
@@ -125,12 +119,10 @@ function drawStackedAreaChart(histcatexplong) {
         chart.yAxis.tickFormat(d3.format(',.4f'));
 
         d3.select("svg").remove();
-        // d3.select('svg')
-
         d3.select('#chart1')
             .append("svg")
             .datum(histcatexplong)
-            .transition().duration(300)
+            .transition().duration(100)
             .call(chart);
         nv.utils.windowResize(chart.update);
         return chart;
@@ -138,7 +130,6 @@ function drawStackedAreaChart(histcatexplong) {
 }
 
 function drawBarChart(histcatexplong) {
-
     Array.prototype.max = function () {
         return Math.max.apply(null, this);
     };
@@ -147,37 +138,35 @@ function drawBarChart(histcatexplong) {
         return Math.min.apply(null, this);
     };
 
-    var arrayY = [];
-    for (var hist in histcatexplong[0].values) {
+    let arrayY = [];
+    for (let hist in histcatexplong[0].values) {
         arrayY.push(histcatexplong[0].values[hist][1]);
     }
 
-    var minYValue = arrayY.min();
-    var maxYValue = arrayY.max();
+    const minYValue = arrayY.min();
+    const maxYValue = arrayY.max();
 
     nv.addGraph(function () {
-        var chart = nv.models.multiBarChart()
+        let color = $('#colorpicker').colorpicker('getValue');
+        console.info("colorpicker", color)
+        let chart = nv.models.multiBarChart()
             .showControls(false)
             .color([color])
             .forceY([minYValue, maxYValue])
         ;
 
-        chart.xAxis
-            .tickFormat(function (d) {
-                return d3.time.format('%x')(new Date(d))
-            });
+        chart.xAxis.tickFormat(function (d) {
+            return d3.time.format('%x')(new Date(d))
+        });
         chart.yAxis.tickFormat(d3.format(',.4f'));
 
         d3.select("svg").remove();
-
         d3.select('#chart1')
             .append("svg")
             .datum(histcatexplong)
             .transition().duration(100)
             .call(chart);
-
         nv.utils.windowResize(chart.update);
-
         return chart;
     });
 }
@@ -290,8 +279,8 @@ $('#getData').click(function () {
     })();
 });
 
-$('.draw').click(function () {
-    var selectedGraph = $("#imagepicker").data('picker').selected_values()[0];
+function drawing() {
+    const selectedGraph = $("#imagepicker").data('picker').selected_values()[0];
     console.info("selectedGraph", selectedGraph)
 
     if (selectedGraph == 1) {
@@ -300,11 +289,16 @@ $('.draw').click(function () {
     if (selectedGraph == 2) {
         drawBarChart(histcatexplong);
     }
+}
 
-    return false;
+$('.draw').click(function () {
+    // drawing();
+    var parent_fieldset = $(this).parents('fieldset');
+    parent_fieldset.fadeOut(400, function () {
+        drawing();
+    });
 });
 
-
-$('.clear').click(function () {
-    d3.select("svg").remove();
+$(".save").click(function () {
+    saveSvgAsPng(d3.select('svg').node(), 'chart.png');
 });
