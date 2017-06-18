@@ -171,7 +171,7 @@ function drawBarChart(histcatexplong) {
     });
 }
 
-function allIn(responseArray) {
+function makeCoordinateArray(responseArray) {
     function finalToData(key, value) {
         this.key = key;
         this.values = value;
@@ -269,7 +269,7 @@ $('#getData').click(function () {
                                 return new Date(a.date).getTime() - new Date(b.date).getTime()
                             });
 
-                            histcatexplong = allIn(responseArray);
+                            histcatexplong = makeCoordinateArray(responseArray);
                         }
                     }
                 };
